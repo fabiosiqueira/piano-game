@@ -118,7 +118,11 @@ Princípio de isolamento: `midi/` não conhece Canvas; `engine/` não conhece Re
 - A posição Y de cada bloco é função de `(agora, tile.time, fallSec)` da dificuldade.
 - **Input:** pointer events nas colunas (cobre toque e mouse) + teclas D/F/J/K para as
   colunas 0–3, traduzidos em `press`/`release` na engine.
-- A cada acerto retornado pela engine, `audio.play(tile.midi)` toca a nota de piano.
+- **Áudio desacoplado da pontuação:** toda pressão numa coluna toca uma nota de piano,
+  independentemente de a engine classificar como acerto ou erro — clique errado nunca
+  silencia a nota. Toca o pitch do bloco não-tocado mais próximo daquela coluna; se a
+  coluna não tiver mais nenhum bloco, toca uma nota fixa de fallback daquela coluna. A
+  classificação acerto/erro da engine afeta só pontos e game over.
 - Pausa congela o relógio. Game over / vitória encerram o loop e abrem o Resultado.
 
 ## Telas
@@ -138,6 +142,11 @@ Princípio de isolamento: `midi/` não conhece Canvas; `engine/` não conhece Re
   Android na Fase 2). O Sampler interpola as notas intermediárias.
 - Carregamento dos samples acontece antes do início do jogo (na StartScreen).
 - `audio/piano.ts` expõe `load()` e `play(midi)`; nenhum outro módulo conhece Tone.js.
+- **Desacoplado da pontuação:** o loop chama `audio.play()` em toda pressão de coluna,
+  não no resultado da engine. A nota soa sempre — um clique errado não silencia a nota.
+  O pitch tocado é o do bloco-alvo da coluna (bloco não-tocado mais próximo); coluna sem
+  blocos restantes usa uma nota fixa de fallback. Decisão de qual pitch tocar fica no
+  loop de jogo, não na engine de pontuação.
 
 ## Estratégia de testes (TDD)
 
