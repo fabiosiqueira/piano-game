@@ -8,25 +8,38 @@ export const PERFECT_WINDOW = 0.08;
 export const GOOD_WINDOW = 0.18;
 
 export interface GameState {
+  readonly score: number;
+  readonly combo: number;
+  readonly maxCombo: number;
+  readonly status: "playing" | "over";
+  /** Quantidade de tiles acertados. */
+  readonly hitCount: number;
+  /** Total de tiles da beatmap. */
+  readonly totalTiles: number;
+}
+
+type MutableGameState = {
   score: number;
   combo: number;
   maxCombo: number;
   status: "playing" | "over";
-  /** Quantidade de tiles acertados. */
   hitCount: number;
-  /** Total de tiles da beatmap. */
   totalTiles: number;
-}
+};
 
 /** Estado e regras de uma partida (modo clássico). Independente de UI. */
 export class Game {
   private readonly tiles: Tile[];
   private readonly hit = new Set<number>();
-  readonly state: GameState;
+  private readonly mutableState: MutableGameState;
+
+  get state(): GameState {
+    return this.mutableState;
+  }
 
   constructor(beatmap: Beatmap) {
     this.tiles = [...beatmap.tiles].sort((a, b) => a.time - b.time);
-    this.state = {
+    this.mutableState = {
       score: 0,
       combo: 0,
       maxCombo: 0,
@@ -38,7 +51,7 @@ export class Game {
 
   /** Registra um toque numa coluna no instante `nowSec`. */
   tap(lane: number, nowSec: number): HitQuality {
-    if (this.state.status === "over") return "miss";
+    if (this.mutableState.status === "over") return "miss";
 
     let best: Tile | undefined;
     let bestDelta = Infinity;
@@ -53,35 +66,38 @@ export class Game {
     }
 
     if (best === undefined || bestDelta > GOOD_WINDOW) {
-      this.state.combo = 0;
-      this.state.status = "over";
+      this.mutableState.combo = 0;
+      this.mutableState.status = "over";
       return "miss";
     }
 
     this.hit.add(best.id);
     const quality: HitQuality =
       bestDelta <= PERFECT_WINDOW ? "perfect" : "good";
-    this.state.combo += 1;
-    this.state.maxCombo = Math.max(this.state.maxCombo, this.state.combo);
-    this.state.hitCount += 1;
-    this.state.score += pointsFor(quality, this.state.combo);
+    this.mutableState.combo += 1;
+    this.mutableState.maxCombo = Math.max(
+      this.mutableState.maxCombo,
+      this.mutableState.combo,
+    );
+    this.mutableState.hitCount += 1;
+    this.mutableState.score += pointsFor(quality, this.mutableState.combo);
     return quality;
   }
 
   /** Avança o relógio: encerra o jogo se um tile passou, ou se todos foram tocados. */
   update(nowSec: number): void {
-    if (this.state.status === "over") return;
+    if (this.mutableState.status === "over") return;
 
     for (const t of this.tiles) {
       if (this.hit.has(t.id)) continue;
       if (nowSec > t.time + GOOD_WINDOW) {
-        this.state.status = "over";
+        this.mutableState.status = "over";
         return;
       }
     }
 
     if (this.hit.size === this.tiles.length) {
-      this.state.status = "over";
+      this.mutableState.status = "over";
     }
   }
 }

@@ -41,4 +41,10 @@ describe("generateBeatmap", () => {
       expect(lanes[i]).not.toBe(lanes[i - 1]);
     }
   });
+
+  it("distribui notas simultâneas em colunas diferentes", () => {
+    const notes = [note(0), note(0), note(0), note(0)];
+    const lanes = generateBeatmap(notes).tiles.map((t) => t.lane);
+    expect(new Set(lanes).size).toBe(4);
+  });
 });
