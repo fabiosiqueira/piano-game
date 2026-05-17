@@ -14,7 +14,7 @@ describe("GameScreen", () => {
       <GameScreen
         beatmap={beatmap}
         fallSec={2.3}
-        piano={{ load: vi.fn(), play: vi.fn() } as never}
+        piano={{ load: vi.fn().mockResolvedValue(undefined), play: vi.fn() }}
         onEnd={vi.fn()}
       />,
     );

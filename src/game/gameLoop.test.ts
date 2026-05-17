@@ -31,7 +31,7 @@ describe("GameLoop", () => {
       beatmap,
       fallSec: 2.3,
       canvas: fakeCanvas(),
-      piano: { load: vi.fn(), play } as never,
+      piano: { load: vi.fn().mockResolvedValue(undefined), play },
       onEnd: vi.fn(),
     });
     loop.pressLane(0);
@@ -43,7 +43,7 @@ describe("GameLoop", () => {
       beatmap,
       fallSec: 2.3,
       canvas: fakeCanvas(),
-      piano: { load: vi.fn(), play: vi.fn() } as never,
+      piano: { load: vi.fn().mockResolvedValue(undefined), play: vi.fn() },
       onEnd: vi.fn(),
     });
     loop.pressLane(3);
@@ -62,7 +62,7 @@ describe("GameLoop", () => {
           beatmap,
           fallSec: 2.3,
           canvas,
-          piano: { load: vi.fn(), play: vi.fn() } as never,
+          piano: { load: vi.fn().mockResolvedValue(undefined), play: vi.fn() },
           onEnd: vi.fn(),
         }),
     ).toThrow();

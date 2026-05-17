@@ -33,8 +33,12 @@ export function ResultScreen({
           {hitCount}/{totalTiles} ({accuracy}%)
         </dd>
       </dl>
-      <button onClick={onReplay}>Jogar de novo</button>
-      <button onClick={onBack}>Voltar</button>
+      <button type="button" onClick={onReplay}>
+        Jogar de novo
+      </button>
+      <button type="button" onClick={onBack}>
+        Voltar
+      </button>
     </div>
   );
 }

@@ -3,12 +3,12 @@ import type { Beatmap } from "../engine/types";
 import type { GameState } from "../engine/game";
 import { GameLoop } from "../game/gameLoop";
 import { keyToLane } from "../game/input";
-import type { Piano } from "../audio/piano";
+import type { IPiano } from "../audio/piano";
 
 interface GameScreenProps {
   beatmap: Beatmap;
   fallSec: number;
-  piano: Piano;
+  piano: IPiano;
   onEnd: (status: "won" | "lost", state: GameState) => void;
 }
 

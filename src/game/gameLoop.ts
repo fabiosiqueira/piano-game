@@ -5,7 +5,7 @@ import type { Beatmap } from "../engine/types";
 import { laneLayout, visibleTiles } from "../render/geometry";
 import type { LaneLayout } from "../render/geometry";
 import { drawFrame } from "../render/renderer";
-import type { Piano } from "../audio/piano";
+import type { IPiano } from "../audio/piano";
 import { LANE_FALLBACK_MIDI } from "./input";
 
 export interface GameLoopResult {
@@ -17,7 +17,7 @@ export interface GameLoopOptions {
   readonly beatmap: Beatmap;
   readonly fallSec: number;
   readonly canvas: HTMLCanvasElement;
-  readonly piano: Piano;
+  readonly piano: IPiano;
   readonly onEnd: (result: GameLoopResult) => void;
 }
 
