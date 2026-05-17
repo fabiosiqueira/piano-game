@@ -21,11 +21,13 @@ export interface Tile {
   lane: number;
   /** Pitch MIDI, usado depois para tocar o som de piano. */
   midi: number;
+  /** Duração do bloco, em segundos (vinda da nota MIDI). */
+  durationSec: number;
 }
 
 /** Beatmap completa de uma música. */
 export interface Beatmap {
-  tiles: Tile[];
+  tiles: readonly Tile[];
   /** Duração total da música, em segundos. */
   durationSec: number;
 }
