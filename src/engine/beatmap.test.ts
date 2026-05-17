@@ -2,10 +2,10 @@ import { describe, it, expect } from "vitest";
 import { generateBeatmap } from "./beatmap";
 import type { MidiNote } from "./types";
 
-const note = (time: number, midi = 60): MidiNote => ({
+const note = (time: number, midi = 60, duration = 0.25): MidiNote => ({
   time,
   midi,
-  duration: 0.25,
+  duration,
 });
 
 describe("generateBeatmap", () => {
@@ -28,9 +28,10 @@ describe("generateBeatmap", () => {
     expect(tiles.map((t) => t.id)).toEqual([0, 1, 2]);
   });
 
-  it("preserva o pitch e calcula a duração total", () => {
-    const bm = generateBeatmap([note(0, 64), note(3, 67)]);
+  it("preserva pitch e duração e calcula a duração total", () => {
+    const bm = generateBeatmap([note(0, 64, 0.5), note(3, 67, 0.25)]);
     expect(bm.tiles[1].midi).toBe(67);
+    expect(bm.tiles[0].durationSec).toBe(0.5);
     expect(bm.durationSec).toBeCloseTo(3.25);
   });
 
@@ -42,9 +43,10 @@ describe("generateBeatmap", () => {
     }
   });
 
-  it("distribui notas simultâneas em colunas diferentes", () => {
+  it("limita notas simultâneas a 2 colunas distintas", () => {
     const notes = [note(0), note(0), note(0), note(0)];
-    const lanes = generateBeatmap(notes).tiles.map((t) => t.lane);
-    expect(new Set(lanes).size).toBe(4);
+    const tiles = generateBeatmap(notes).tiles;
+    expect(tiles).toHaveLength(2);
+    expect(new Set(tiles.map((t) => t.lane)).size).toBe(2);
   });
 });

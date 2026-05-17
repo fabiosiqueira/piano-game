@@ -9,8 +9,14 @@ describe("types", () => {
 
   it("os tipos compõem uma beatmap válida", () => {
     const note: MidiNote = { time: 0, midi: 60, duration: 0.5 };
-    const tile: Tile = { id: 0, time: note.time, lane: 0, midi: note.midi };
+    const tile: Tile = {
+      id: 0,
+      time: note.time,
+      lane: 0,
+      midi: note.midi,
+      durationSec: note.duration,
+    };
     const beatmap: Beatmap = { tiles: [tile], durationSec: 0.5 };
-    expect(beatmap.tiles[0].lane).toBe(0);
+    expect(beatmap.tiles[0].durationSec).toBe(0.5);
   });
 });
