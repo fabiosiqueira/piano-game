@@ -16,3 +16,6 @@ export function comboMultiplier(combo: number): number {
 export function pointsFor(quality: HitQuality, combo: number): number {
   return BASE_POINTS[quality] * comboMultiplier(combo);
 }
+
+/** Bônus por segurar uma nota longa até o fim. */
+export const LONG_NOTE_BONUS = 50;

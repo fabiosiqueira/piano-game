@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { comboMultiplier, pointsFor } from "./score";
+import { comboMultiplier, pointsFor, LONG_NOTE_BONUS } from "./score";
 import type { HitQuality } from "./score";
 
 describe("comboMultiplier", () => {
@@ -32,5 +32,11 @@ describe("pointsFor", () => {
   it("miss vale 0", () => {
     const miss: HitQuality = "miss";
     expect(pointsFor(miss, 30)).toBe(0);
+  });
+});
+
+describe("LONG_NOTE_BONUS", () => {
+  it("é um valor positivo de bônus", () => {
+    expect(LONG_NOTE_BONUS).toBeGreaterThan(0);
   });
 });
