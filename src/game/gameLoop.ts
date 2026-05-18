@@ -28,13 +28,16 @@ export class GameLoop {
   private readonly ctx: CanvasRenderingContext2D;
   private readonly layout: LaneLayout;
   private startedAt = 0;
-  private elapsedBeforePause = 0;
+  private elapsedBeforePause: number;
   private rafId = 0;
   private running = false;
 
   constructor(options: GameLoopOptions) {
     this.options = options;
-    this.game = new Game(options.beatmap);
+    this.game = new Game(options.beatmap, options.fallSec);
+    // Lead-in: o relógio começa em -fallSec para que o primeiro bloco caia do
+    // topo até a linha de acerto, em vez de nascer já sobre ela.
+    this.elapsedBeforePause = -options.fallSec;
     const ctx = options.canvas.getContext("2d");
     if (ctx === null) throw new Error("Contexto 2D do Canvas indisponível");
     this.ctx = ctx;
@@ -110,7 +113,11 @@ export class GameLoop {
   }
 
   private render(now: number): void {
-    const tiles = visibleTiles(this.options.beatmap.tiles, now, this.layout);
+    // Blocos já tocados somem da tela; só os pendentes são desenhados.
+    const pending = this.options.beatmap.tiles.filter(
+      (t) => !this.game.isHit(t.id),
+    );
+    const tiles = visibleTiles(pending, now, this.layout);
     drawFrame(this.ctx, {
       width: this.layout.width,
       height: this.layout.height,

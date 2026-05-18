@@ -25,4 +25,25 @@ describe("parseMidi", () => {
     midi.addTrack();
     expect(parseMidi(midi.toArray().buffer as ArrayBuffer)).toEqual([]);
   });
+
+  it("descarta notas duplicadas de faixas repetidas", () => {
+    const midi = new Midi();
+    for (let t = 0; t < 2; t++) {
+      const track = midi.addTrack();
+      track.addNote({ midi: 60, time: 0, duration: 0.5 });
+      track.addNote({ midi: 64, time: 1, duration: 0.25 });
+    }
+    const notes = parseMidi(midi.toArray().buffer as ArrayBuffer);
+    expect(notes).toHaveLength(2);
+    expect(notes.map((n) => n.midi)).toEqual([60, 64]);
+  });
+
+  it("preserva notas simultâneas de pitches diferentes (acorde real)", () => {
+    const midi = new Midi();
+    const track = midi.addTrack();
+    track.addNote({ midi: 60, time: 0, duration: 0.5 });
+    track.addNote({ midi: 64, time: 0, duration: 0.5 });
+    const notes = parseMidi(midi.toArray().buffer as ArrayBuffer);
+    expect(notes).toHaveLength(2);
+  });
 });
